@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User's page</title>
+</head>
+<body>
+<div style='float: right; '><a th:href="@{/logout}">LOGOUT</a></div>
+<h1>Welcome to your own page!</h1>
+<table border="2">
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Last name</th>
+        <th>E-mail</th>
+        <th>Username</th>
+        <th>Password</th>
+        <th>Roles</th>
+    </tr>
+    <tr th:object="${user}">
+        <td th:text="${user.id}">ID</td>
+        <td th:text="${user.name}">getName</td>
+        <td th:text="${user.lastName}">getLastname</td>
+        <td th:text="${user.email}">getEmail</td>
+        <td th:text="${user.username}">getUsername</td>
+        <td th:text="${user.password}">getPassword</td>
+        <td>
+            <ul>
+                <li th:each="role : ${user.getRoles()}" th:text = "${role.getRoleName()}">
+                </li>
+            </ul>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
