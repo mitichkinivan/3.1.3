@@ -2,8 +2,18 @@ package web.model;
 
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.persistence.*;
-import java.util.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 
 @Entity
 @Table(name = "roles")
@@ -11,7 +21,7 @@ public class Role implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @Column(name = "name")
     private String roleName;
@@ -47,7 +57,7 @@ public class Role implements GrantedAuthority {
     }
 
     public String getRoleName() {
-        return roleName;
+        return roleName.replace("ROLE_", "");
     }
 
     public void setRoleName(String role) {
@@ -77,4 +87,3 @@ public class Role implements GrantedAuthority {
         return Objects.hash(roleName);
     }
 }
-

@@ -1,15 +1,15 @@
 package web.service;
 
-import web.model.Role;
-import web.model.User;
-import web.repositories.RoleRepository;
-import web.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import web.model.Role;
+import web.model.User;
+import web.repositories.RoleRepository;
+import web.repositories.UserRepository;
 
 import java.util.List;
 
@@ -48,18 +48,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updateUser(User user) {
+    public boolean updateUser(User user) {
+        if (user == null) {
+            return false;
+        }
+
         if (!user.getPassword().equals(getUser(user.getId()).getPassword())) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
 
         userRepository.save(user);
+
+        return true;
     }
 
     @Override
     @Transactional
-    public void deleteUser(long id) {
+    public boolean deleteUser(long id) {
+        if (getUser(id) == null) {
+            return false;
+        }
+
         userRepository.deleteById(id);
+
+        return true;
     }
 
     @Override

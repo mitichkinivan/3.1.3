@@ -1,15 +1,15 @@
 package web.service;
 
-import web.model.Role;
-import web.repositories.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import web.model.Role;
+import web.repositories.RoleRepository;
 
 import java.util.List;
 
 @Service
-public class RoleServiceImpl implements RoleService{
+public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;
 
@@ -40,5 +40,10 @@ public class RoleServiceImpl implements RoleService{
     @Transactional
     public void deleteRole(Long id) {
         roleRepository.deleteById(id);
+    }
+
+    @Override
+    public Role getByRoleName(String name) {
+        return roleRepository.getByRoleName(name);
     }
 }

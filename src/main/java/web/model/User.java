@@ -3,6 +3,7 @@ package web.model;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.Transient;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.CascadeType;
@@ -20,9 +21,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 
 @Entity
+//@JsonIgnoreProperties(ignoreUnknown = true)
 @Table(name = "users")
+@Transient
 public class User implements UserDetails {
 
     @Id
@@ -32,10 +36,10 @@ public class User implements UserDetails {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "last_name")
-    private String lastName;
+    @Column(name = "lastname")
+    private String lastname;
 
-    @Column(name = "e_mail")
+    @Column(name = "email")
     private String email;
 
     @Column(name = "username", unique = true)
@@ -45,18 +49,18 @@ public class User implements UserDetails {
     private String password;
 
     @Fetch(FetchMode.JOIN)
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE,CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(name = "users_roles",
-                joinColumns = @JoinColumn(name = "user_id"),
-                inverseJoinColumns = @JoinColumn(name = "role_id"))
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
     public User() {
     }
 
-    public User(String name, String lastName, String email, String username, String password) {
+    public User(String name, String lastname, String email, String username, String password) {
         this.name = name;
-        this.lastName = lastName;
+        this.lastname = lastname;
         this.email = email;
         this.username = username;
         this.password = password;
@@ -66,7 +70,17 @@ public class User implements UserDetails {
         return roles;
     }
 
-    public String getUserRole(){
+    public String getSortedRolesNames() {
+        StringBuilder sortedRolesNames = new StringBuilder();
+        TreeSet<String> roleNames = new TreeSet<>();
+
+        roles.forEach(r -> roleNames.add(r.getRoleName()));
+        roleNames.forEach(n -> sortedRolesNames.append(n).append(' '));
+
+        return sortedRolesNames.toString();
+    }
+
+    public String getUserRole() {
         String role = getRoles().toString();
 
         if (role != null) {
@@ -80,12 +94,12 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    public void addRole(Role role){
+    public void addRole(Role role) {
         this.roles.add(role);
         role.getUsers().add(this);
     }
 
-    public void removeRole(Role role){
+    public void removeRole(Role role) {
         this.roles.remove(role);
         role.getUsers().remove(this);
     }
@@ -110,12 +124,12 @@ public class User implements UserDetails {
         this.name = name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setLastname(String lastName) {
+        this.lastname = lastName;
     }
 
     public String getEmail() {
@@ -126,8 +140,8 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    public void setUsername(String userName) {
-        this.username = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @Override
@@ -174,7 +188,7 @@ public class User implements UserDetails {
 
         return id == that.id
                 && name.equals(that.name)
-                && lastName.equals(that.lastName)
+                && lastname.equals(that.lastname)
                 && username.equals(that.username)
                 && email.equals(that.email)
                 && password.equals(that.password)
@@ -183,6 +197,6 @@ public class User implements UserDetails {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, lastName, email, username, password, roles);
+        return Objects.hash(id, name, lastname, email, username, password, roles);
     }
 }
